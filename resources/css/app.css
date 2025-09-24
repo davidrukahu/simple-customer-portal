@@ -1,0 +1,96 @@
+/* OneChamber Customer Portal Styles */
+
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+}
+
+body {
+    font-family: 'Figtree', sans-serif;
+    background-color: var(--light-color);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: transform 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.card {
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    border: none;
+}
+
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.badge {
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Custom utility classes */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.shadow-soft {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.border-radius-lg {
+    border-radius: 15px;
+}
+
+.border-radius-md {
+    border-radius: 10px;
+}
+
+.border-radius-sm {
+    border-radius: 8px;
+}

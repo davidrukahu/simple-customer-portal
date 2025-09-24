@@ -1,0 +1,178 @@
+# OneChamber Customer Portal - Product Requirements Document
+
+## Overview
+OneChamber Customer Portal is a secure web application for managing domain and service customers. The system provides a customer-facing portal where clients can view their domains, invoices, and account information, plus a comprehensive admin area for managing all customer data, generating invoices, and tracking payments. This replaces manual processes with an automated, professional customer experience while maintaining full control over domain management and billing.
+
+## Core Features
+
+### Customer Portal
+- **Dashboard**: Summary tiles showing open invoices total, overdue count, domains expiring in 30/60/90 days
+- **Domain Management**: View-only list of customer domains with search/sort functionality, domain details including registrar, registration/expiry dates, pricing, and status
+- **Invoice Management**: List and view invoices with status badges, download PDF invoices, view payment instructions
+- **Service Management**: View additional services beyond domains (hosting, SSL, etc.)
+- **Account Information**: View billing address, contact details, and account status
+
+### Admin Management System
+- **Customer Management**: Full CRUD operations for customer accounts, bulk CSV import/export
+- **Domain Management**: Add/edit domains, track renewal dates, manage domain status, CSV import/export
+- **Service Management**: Manage additional services with billing cycles and pricing
+- **Invoice System**: Auto-generate invoices 30 days before domain expiry, manual invoice creation, PDF generation
+- **Payment Tracking**: Mark invoices as paid, track payment methods and references
+- **Reports**: Accounts receivable, expiring domains, revenue reports, CSV exports
+- **Settings**: Business information, currency settings, timezone configuration, billing instructions
+
+### Automated Systems
+- **Invoice Generation**: Automatic invoice creation 30 days before domain expiry
+- **Status Updates**: Automatic domain status changes (active → expired → grace → redemption)
+- **Overdue Tracking**: Automatic calculation of overdue invoices based on due dates
+- **Renewal Reminders**: System tracks and displays domains approaching expiry
+
+## User Experience
+
+### User Personas
+- **Admin (OneChamber)**: Needs comprehensive management tools, bulk operations, reporting, and professional invoice generation
+- **Customer**: Needs easy access to their domain portfolio, billing information, and professional invoice downloads
+
+### Key User Flows
+1. **Customer Login → Dashboard**: Immediate overview of account status, upcoming renewals, outstanding invoices
+2. **Customer Invoice View**: Professional PDF invoices with payment instructions
+3. **Admin Domain Management**: Quick domain addition, status updates, renewal tracking
+4. **Admin Invoice Generation**: Automated renewal invoicing with manual override capabilities
+5. **Admin Payment Processing**: Simple "Mark as Paid" workflow with payment method tracking
+
+### UI/UX Considerations
+- Clean, professional Bootstrap 5 interface
+- Responsive design for mobile access
+- Clear status indicators and badges
+- Intuitive navigation between customer and admin areas
+- Professional invoice PDF templates matching business branding
+
+## Technical Architecture
+
+### System Components
+- **Framework**: Laravel 11 with Blade templating
+- **Frontend**: Bootstrap 5, custom CSS
+- **Database**: MySQL 5.7+/MariaDB with proper indexing
+- **PDF Generation**: DomPDF for invoice creation
+- **Authentication**: Laravel Breeze with role-based access control
+- **File Handling**: CSV import/export for bulk operations
+
+### Data Models
+- **Customers**: Personal info, billing address, currency preferences, account status
+- **Domains**: Domain details, registrar info, pricing, expiry dates, renewal status
+- **Services**: Service definitions, billing cycles, pricing, next invoice dates
+- **Invoices**: Invoice generation, status tracking, totals, due dates
+- **Invoice Items**: Line items linking domains/services to invoices
+- **Payments**: Payment tracking, methods, references, amounts
+- **Settings**: Business configuration, currency, timezone, billing instructions
+
+### Infrastructure Requirements
+- **Hosting**: Shared hosting/cPanel compatible
+- **PHP**: 8.1+ with required extensions
+- **Database**: MySQL 5.7+ or MariaDB
+- **Storage**: File storage for PDF invoices and CSV exports
+- **Email**: SMTP configuration for password resets and notifications
+
+## Development Roadmap
+
+### Phase 1: Foundation (MVP)
+- Laravel 11 project setup with authentication
+- Database migrations and models
+- Basic customer and admin authentication
+- Core data models (customers, domains, invoices, payments)
+- Basic admin CRUD interfaces
+- Simple customer dashboard
+
+### Phase 2: Core Functionality
+- Complete admin management interfaces
+- Customer portal with domain and invoice views
+- Invoice PDF generation
+- Payment tracking system
+- Basic reporting functionality
+- Settings management
+
+### Phase 3: Automation & Polish
+- Automated invoice generation (30-day renewal)
+- Automatic domain status updates
+- CSV import/export functionality
+- Advanced reporting and analytics
+- Professional invoice templates
+- Security hardening and optimization
+
+### Phase 4: Enhancement
+- Service management system
+- Advanced search and filtering
+- Bulk operations
+- Email notifications
+- Advanced reporting dashboards
+- Performance optimizations
+
+## Logical Dependency Chain
+
+### Foundation First
+1. **Laravel Setup**: Project initialization, dependencies, basic configuration
+2. **Database Design**: Migrations, models, relationships, seeders
+3. **Authentication**: Laravel Breeze setup, role-based middleware
+4. **Basic Models**: Customer, Domain, Invoice, Payment models with relationships
+
+### Core Functionality
+5. **Admin Interfaces**: Customer CRUD, Domain CRUD, basic invoice management
+6. **Customer Portal**: Dashboard, domain list, invoice views
+7. **Invoice System**: PDF generation, payment tracking
+8. **Settings Management**: Business configuration, currency, timezone
+
+### Automation & Features
+9. **Auto-invoicing**: Scheduled tasks for renewal invoices
+10. **Status Updates**: Automatic domain status management
+11. **CSV Operations**: Import/export functionality
+12. **Reporting**: Financial and domain reports
+
+### Polish & Security
+13. **Security Hardening**: Policies, middleware, validation
+14. **UI Polish**: Professional styling, responsive design
+15. **Performance**: Optimization, caching, indexing
+16. **Testing**: Unit tests, feature tests, security testing
+
+## Risks and Mitigations
+
+### Technical Challenges
+- **Shared Hosting Limitations**: Design for cPanel constraints, optimize for limited resources
+- **PDF Generation**: Use lightweight DomPDF, optimize templates for performance
+- **Database Performance**: Proper indexing, query optimization, pagination
+- **File Storage**: Efficient PDF storage and cleanup strategies
+
+### MVP Scope Management
+- **Feature Creep**: Focus on core customer portal and admin management first
+- **Complexity**: Start with simple invoice generation, add automation later
+- **Integration**: Avoid external dependencies, keep everything manual/admin-controlled
+- **Timeline**: Prioritize working customer portal over advanced features
+
+### Resource Constraints
+- **Development Time**: Focus on core functionality first, iterate quickly
+- **Hosting Costs**: Optimize for shared hosting, minimize resource usage
+- **Maintenance**: Design for easy updates and minimal ongoing maintenance
+
+## Appendix
+
+### Business Configuration
+- **Company**: OneChamber LTD
+- **Address**: Worldwide Printing Center, 4th Floor, Mushebi Road, Parklands, Nairobi, Kenya
+- **Currency**: KES (Kenyan Shillings)
+- **Timezone**: Africa/Nairobi (GMT+3)
+- **Invoice Format**: INV-{YYYY}-{sequence} (e.g., INV-2025-0001)
+
+### Technical Specifications
+- **PHP**: 8.1+ with Laravel 11
+- **Database**: MySQL 5.7+ or MariaDB
+- **Frontend**: Bootstrap 5, responsive design
+- **PDF**: DomPDF for invoice generation
+- **Authentication**: Laravel Breeze with role-based access
+- **File Formats**: CSV import/export, PDF invoices
+- **Security**: CSRF protection, rate limiting, input validation
+
+### Sample Invoice Analysis
+- Professional invoice format with company branding
+- Clear line items for domains and services
+- Payment instructions and contact information
+- Proper numbering scheme and due dates
+- Currency formatting for KES

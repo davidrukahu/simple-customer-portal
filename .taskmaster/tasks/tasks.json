@@ -1,0 +1,371 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Laravel 11 Project Setup with Authentication",
+        "description": "Initialize a new Laravel 11 project with Breeze authentication and role-based access control for customer and admin users.",
+        "details": "1. Create a new Laravel 11 project using Composer\n2. Install Laravel Breeze for authentication scaffolding\n3. Configure database connection in .env file\n4. Create User model with role field (admin/customer)\n5. Implement role-based middleware for route protection\n6. Set up separate admin and customer authentication routes\n7. Configure basic layout templates with Bootstrap 5\n8. Implement login, registration, and password reset functionality\n9. Create separate dashboard routes for admin and customer\n10. Configure email settings for password resets",
+        "testStrategy": "1. Unit tests for User model and role functionality\n2. Feature tests for authentication flows (login, logout, registration)\n3. Browser tests for UI components\n4. Test role-based access control with different user types\n5. Verify email configuration with mailtrap.io",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create New Laravel 11 Project",
+            "description": "Initialize a new Laravel 11 project using Composer and configure the basic environment settings.",
+            "dependencies": [],
+            "details": "Run `composer create-project laravel/laravel:^11.0 project-name` to create a new Laravel 11 project. Configure the .env file with appropriate application name, URL, and timezone settings. Set up the database connection parameters including DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, and DB_PASSWORD. Configure mail settings for password reset functionality using MAIL_MAILER, MAIL_HOST, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, and MAIL_ENCRYPTION.",
+            "status": "done",
+            "testStrategy": "Verify the Laravel installation by running `php artisan --version`. Test database connection with `php artisan migrate:status`."
+          },
+          {
+            "id": 2,
+            "title": "Install and Configure Laravel Breeze",
+            "description": "Add Laravel Breeze authentication scaffolding with Blade templates and Bootstrap 5 styling.",
+            "dependencies": [],
+            "details": "Run `composer require laravel/breeze --dev` to install Breeze. Execute `php artisan breeze:install blade` to scaffold the authentication views and routes. Choose Bootstrap as the frontend framework when prompted. Run `npm install` to install frontend dependencies. Run `npm run dev` to compile assets. Modify the default Breeze views in resources/views/auth/ to match project requirements.",
+            "status": "done",
+            "testStrategy": "Test registration, login, and password reset flows manually. Verify that all authentication views are properly styled with Bootstrap 5."
+          },
+          {
+            "id": 3,
+            "title": "Modify User Model with Role Support",
+            "description": "Extend the User model to include role-based functionality for admin and customer users.",
+            "dependencies": [],
+            "details": "Create a migration to add a 'role' column to the users table: `php artisan make:migration add_role_to_users_table`. In the migration file, add `$table->enum('role', ['admin', 'customer'])->default('customer');`. Run `php artisan migrate` to apply the migration. Update the User model to include role-related methods like `isAdmin()` and `isCustomer()`. Add role field to the registration form in resources/views/auth/register.blade.php. Modify the RegisteredUserController to save the role during registration.",
+            "status": "done",
+            "testStrategy": "Create unit tests for User model to verify role methods work correctly. Test registration with different roles."
+          },
+          {
+            "id": 4,
+            "title": "Implement Role-Based Middleware",
+            "description": "Create middleware to protect routes based on user roles.",
+            "dependencies": [],
+            "details": "Create a role middleware using `php artisan make:middleware CheckRole`. Implement the middleware to check user roles and restrict access accordingly. Register the middleware in app/Http/Kernel.php as 'role'. Create separate middleware for admin and customer roles if needed. Implement logic to redirect unauthorized users to appropriate pages with error messages.",
+            "status": "done",
+            "testStrategy": "Test middleware by attempting to access protected routes with different user roles. Verify proper redirects and error messages for unauthorized access."
+          },
+          {
+            "id": 5,
+            "title": "Set Up Role-Specific Authentication Routes",
+            "description": "Configure separate authentication routes and controllers for admin and customer users.",
+            "dependencies": [],
+            "details": "Create route groups in routes/web.php for admin and customer areas using the role middleware. Define routes for admin dashboard in a separate routes/admin.php file. Define routes for customer dashboard in routes/customer.php file. Include these route files in the main RouteServiceProvider. Create separate controllers for admin and customer dashboards using `php artisan make:controller Admin/DashboardController` and `php artisan make:controller Customer/DashboardController`.",
+            "status": "done",
+            "testStrategy": "Test route protection by attempting to access routes with different user roles. Verify proper routing to role-specific dashboards after login."
+          },
+          {
+            "id": 6,
+            "title": "Create Dashboard Views for Different Roles",
+            "description": "Implement separate dashboard views and layouts for admin and customer users.",
+            "dependencies": [],
+            "details": "Create admin dashboard view in resources/views/admin/dashboard.blade.php. Create customer dashboard view in resources/views/customer/dashboard.blade.php. Implement role-specific layouts with appropriate navigation menus in resources/views/layouts/. Customize the redirect logic in app/Providers/RouteServiceProvider.php to direct users to the appropriate dashboard based on their role after login. Update the LoginController to redirect users based on their role.",
+            "status": "done",
+            "testStrategy": "Test the dashboard views with different user roles. Verify that navigation menus show appropriate options for each role."
+          },
+          {
+            "id": 7,
+            "title": "Configure Email Settings for Password Resets",
+            "description": "Set up email configuration for password reset functionality.",
+            "dependencies": [],
+            "details": "Configure mail settings in .env file using Mailtrap or another testing service. Set up MAIL_FROM_ADDRESS and MAIL_FROM_NAME in .env. Customize password reset email templates in resources/views/auth/emails/. Test password reset flow to ensure emails are sent correctly. Document the email configuration process for production deployment.",
+            "status": "done",
+            "testStrategy": "Test password reset flow end-to-end. Verify that reset emails are sent and contain valid reset links. Test with different email providers."
+          },
+          {
+            "id": 8,
+            "title": "Implement User Profile Management",
+            "description": "Create functionality for users to view and update their profile information.",
+            "dependencies": [],
+            "details": "Create ProfileController with methods for showing and updating profiles. Implement profile views in resources/views/profile/. Add form for updating user information including name, email, and password. Implement validation for profile updates. Add profile link in navigation menus for both admin and customer layouts. Include profile picture upload functionality if required.",
+            "status": "done",
+            "testStrategy": "Test profile update functionality with valid and invalid inputs. Verify that validation errors are displayed correctly. Test password change functionality."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Database Design and Migration Setup",
+        "description": "Design and implement the database schema with migrations for all core models including customers, domains, services, invoices, payments, and settings.",
+        "details": "1. Create migrations for the following tables:\n   - customers (id, name, email, phone, address, city, country, postal_code, currency, status, created_at, updated_at)\n   - domains (id, customer_id, name, registrar, registration_date, expiry_date, price, status, created_at, updated_at)\n   - services (id, name, description, billing_cycle, price, created_at, updated_at)\n   - customer_services (id, customer_id, service_id, next_invoice_date, price, created_at, updated_at)\n   - invoices (id, customer_id, invoice_number, issue_date, due_date, total_amount, status, created_at, updated_at)\n   - invoice_items (id, invoice_id, item_type, item_id, description, amount, created_at, updated_at)\n   - payments (id, invoice_id, amount, payment_date, payment_method, reference, created_at, updated_at)\n   - settings (id, key, value, created_at, updated_at)\n2. Add proper indexes for performance optimization\n3. Define foreign key constraints\n4. Create database seeders for testing data\n5. Implement soft deletes where appropriate",
+        "testStrategy": "1. Unit tests for migrations and schema integrity\n2. Test foreign key constraints and cascading behavior\n3. Verify indexes are properly created\n4. Test seeders for generating test data\n5. Validate database schema against the requirements",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Customer and Domain Table Migrations",
+            "description": "Implement migration files for the customers and domains tables with proper schema definitions, indexes, and foreign key relationships.",
+            "dependencies": [],
+            "details": "Create two migration files using Laravel's migration system:\n1. For customers table with fields: id (primary key), name, email (unique index), phone, address, city, country, postal_code, currency, status, created_at, updated_at, deleted_at (for soft deletes)\n2. For domains table with fields: id (primary key), customer_id (foreign key), name (index), registrar, registration_date, expiry_date (index), price, status (index), created_at, updated_at, deleted_at\n\nAdd appropriate data types, constraints, and indexes. Implement foreign key from domains.customer_id to customers.id with cascade on update and restrict on delete.",
+            "status": "done",
+            "testStrategy": "Write unit tests to verify migrations run successfully, check that indexes are created correctly, and test foreign key constraints between domains and customers tables."
+          },
+          {
+            "id": 2,
+            "title": "Create Service and Customer Service Table Migrations",
+            "description": "Implement migration files for the services and customer_services tables with proper schema definitions, indexes, and relationships.",
+            "dependencies": [
+              "2.1"
+            ],
+            "details": "Create two migration files:\n1. For services table with fields: id (primary key), name (unique index), description, billing_cycle, price, created_at, updated_at, deleted_at\n2. For customer_services table with fields: id (primary key), customer_id (foreign key), service_id (foreign key), next_invoice_date (index), price, created_at, updated_at, deleted_at\n\nAdd appropriate data types and constraints. Implement foreign keys from customer_services.customer_id to customers.id and from customer_services.service_id to services.id with appropriate cascade/restrict rules.",
+            "status": "done",
+            "testStrategy": "Test that migrations run successfully, verify foreign key constraints work correctly between customer_services and both customers and services tables, and check that indexes are properly created."
+          },
+          {
+            "id": 3,
+            "title": "Create Invoice and Invoice Items Table Migrations",
+            "description": "Implement migration files for the invoices and invoice_items tables with proper schema definitions, indexes, and relationships.",
+            "dependencies": [
+              "2.1"
+            ],
+            "details": "Create two migration files:\n1. For invoices table with fields: id (primary key), customer_id (foreign key), invoice_number (unique index), issue_date, due_date (index), total_amount, status (index), created_at, updated_at, deleted_at\n2. For invoice_items table with fields: id (primary key), invoice_id (foreign key), item_type, item_id, description, amount, created_at, updated_at\n\nImplement polymorphic relationship for invoice_items (item_type, item_id) to support different billable items. Add foreign key from invoices.customer_id to customers.id and from invoice_items.invoice_id to invoices.id with appropriate cascade rules.",
+            "status": "done",
+            "testStrategy": "Test migrations run successfully, verify foreign key constraints between invoices and customers tables and between invoice_items and invoices tables, and test polymorphic relationships for invoice items."
+          },
+          {
+            "id": 4,
+            "title": "Create Payments and Settings Table Migrations",
+            "description": "Implement migration files for the payments and settings tables with proper schema definitions, indexes, and relationships.",
+            "dependencies": [
+              "2.3"
+            ],
+            "details": "Create two migration files:\n1. For payments table with fields: id (primary key), invoice_id (foreign key), amount, payment_date (index), payment_method, reference, created_at, updated_at, deleted_at\n2. For settings table with fields: id (primary key), key (unique index), value, created_at, updated_at\n\nAdd appropriate data types and constraints. Implement foreign key from payments.invoice_id to invoices.id with appropriate cascade/restrict rules. Ensure the settings table can store different types of values (text, boolean, json).",
+            "status": "done",
+            "testStrategy": "Test migrations run successfully, verify foreign key constraints between payments and invoices tables, and check that settings table can store and retrieve different types of values correctly."
+          },
+          {
+            "id": 5,
+            "title": "Implement Database Seeders for Testing Data",
+            "description": "Create database seeders to populate all tables with realistic test data for development and testing purposes.",
+            "dependencies": [
+              "2.1",
+              "2.2",
+              "2.3",
+              "2.4"
+            ],
+            "details": "Create the following seeders:\n1. CustomerSeeder - Generate 50+ test customers with realistic data\n2. ServiceSeeder - Create common service types with different billing cycles\n3. DomainSeeder - Generate 100+ domains assigned to customers\n4. CustomerServiceSeeder - Assign services to customers with varying next invoice dates\n5. InvoiceSeeder - Create invoices with different statuses (draft, sent, paid, overdue)\n6. InvoiceItemSeeder - Generate invoice items linked to domains and services\n7. PaymentSeeder - Create payment records for some invoices\n8. SettingsSeeder - Add default system settings\n\nUse Faker library to generate realistic data and ensure referential integrity between related records.",
+            "status": "done",
+            "testStrategy": "Test that seeders run without errors, verify correct number of records are created in each table, and check that relationships between seeded data are maintained correctly."
+          },
+          {
+            "id": 6,
+            "title": "Optimize Database Schema with Indexes and Constraints",
+            "description": "Review and optimize the database schema by adding additional indexes, constraints, and ensuring proper data types for performance.",
+            "dependencies": [
+              "2.1",
+              "2.2",
+              "2.3",
+              "2.4"
+            ],
+            "details": "1. Review all tables and add composite indexes where appropriate (e.g., customer_id + status)\n2. Add check constraints for status fields to limit possible values\n3. Ensure all date fields use the appropriate data type for efficient querying\n4. Add indexes on frequently queried fields not already indexed\n5. Implement unique constraints where business logic requires\n6. Review and optimize foreign key constraints for cascade/restrict behavior\n7. Add JSON columns where flexible schema is needed\n8. Create a database diagram documenting the schema and relationships\n9. Document indexing strategy and constraints in comments",
+            "status": "done",
+            "testStrategy": "Benchmark query performance before and after optimization, test constraint violations to ensure they work as expected, and verify that all indexes are being used in common queries using EXPLAIN."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Core Model Implementation with Relationships",
+        "description": "Create Eloquent models for all entities with proper relationships, accessors, mutators, and business logic.",
+        "details": "1. Create the following Eloquent models:\n   - Customer (hasMany domains, hasMany invoices, hasMany payments, belongsToMany services)\n   - Domain (belongsTo customer, hasMany invoiceItems)\n   - Service (belongsToMany customers, hasMany invoiceItems)\n   - Invoice (belongsTo customer, hasMany invoiceItems, hasMany payments)\n   - InvoiceItem (belongsTo invoice, morphTo itemable)\n   - Payment (belongsTo invoice, belongsTo customer)\n   - Setting (singleton model for app settings)\n2. Implement accessors and mutators for formatting dates, currency, and statuses\n3. Add scopes for common queries (active, expired, overdue, etc.)\n4. Implement business logic methods for status changes, calculations, etc.\n5. Add validation rules for model attributes\n6. Configure proper JSON serialization for API responses",
+        "testStrategy": "1. Unit tests for each model and its relationships\n2. Test accessors and mutators for proper formatting\n3. Test scopes for correct query results\n4. Verify business logic methods work as expected\n5. Test validation rules with valid and invalid data",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Admin Customer Management Interface",
+        "description": "Develop the admin interface for managing customer accounts with full CRUD operations and bulk import/export functionality.",
+        "details": "1. Create CustomerController with index, create, store, edit, update, destroy methods\n2. Implement customer listing view with search, sort, and pagination\n3. Create customer form views for adding and editing customers\n4. Add validation for customer data\n5. Implement soft delete functionality with restore option\n6. Create CSV import functionality with validation and error handling\n7. Implement CSV export for customer data\n8. Add flash messages for successful operations\n9. Implement customer status toggle functionality\n10. Add customer detail view with all related information (domains, invoices, services)",
+        "testStrategy": "1. Feature tests for all CRUD operations\n2. Test CSV import with valid and invalid data\n3. Test CSV export functionality\n4. Verify search, sort, and pagination work correctly\n5. Test validation rules and error messages\n6. Browser tests for UI components and interactions",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Admin Domain Management System",
+        "description": "Build the admin interface for managing domains with tracking of renewal dates, status management, and import/export capabilities.",
+        "details": "1. Create DomainController with index, create, store, edit, update, destroy methods\n2. Implement domain listing view with search, sort, and filtering options\n3. Create domain form views for adding and editing domains\n4. Add validation for domain data\n5. Implement domain status management (active, expired, grace, redemption)\n6. Create CSV import functionality for bulk domain addition\n7. Implement CSV export for domain data\n8. Add domain detail view with history and related invoices\n9. Implement domain expiry tracking with visual indicators\n10. Add bulk operations for status changes",
+        "testStrategy": "1. Feature tests for all CRUD operations\n2. Test CSV import with valid and invalid data\n3. Test CSV export functionality\n4. Verify search, sort, and filtering work correctly\n5. Test domain status transitions\n6. Browser tests for UI components and interactions",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Admin Service Management System",
+        "description": "Develop the interface for managing additional services beyond domains with billing cycles and pricing.",
+        "details": "1. Create ServiceController with index, create, store, edit, update, destroy methods\n2. Implement service listing view with search and sort functionality\n3. Create service form views for adding and editing services\n4. Add validation for service data\n5. Implement customer service assignment interface\n6. Create billing cycle management (monthly, quarterly, annually)\n7. Implement pricing configuration\n8. Add service detail view with assigned customers\n9. Create customer-specific pricing overrides\n10. Implement next invoice date calculation based on billing cycle",
+        "testStrategy": "1. Feature tests for all CRUD operations\n2. Test service assignment to customers\n3. Verify billing cycle calculations\n4. Test pricing override functionality\n5. Verify next invoice date calculations\n6. Browser tests for UI components and interactions",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Invoice Generation and Management System",
+        "description": "Build the invoice system with automatic generation, PDF creation, and payment tracking functionality.",
+        "details": "1. Create InvoiceController with index, create, store, show, destroy methods\n2. Implement invoice listing view with status filters and search\n3. Create manual invoice generation form\n4. Implement automatic invoice generation for domain renewals (30 days before expiry)\n5. Integrate DomPDF for PDF invoice generation\n6. Create professional invoice template matching business branding\n7. Implement invoice numbering system (INV-{YYYY}-{sequence})\n8. Add payment tracking functionality\n9. Implement invoice status management (draft, sent, paid, overdue, cancelled)\n10. Create invoice item management for adding domains and services",
+        "testStrategy": "1. Feature tests for invoice generation\n2. Test PDF generation and formatting\n3. Verify automatic invoice generation for renewals\n4. Test invoice numbering sequence\n5. Verify payment tracking functionality\n6. Test invoice status transitions\n7. Browser tests for UI components and interactions",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Payment Tracking and Processing System",
+        "description": "Develop the payment tracking system for marking invoices as paid and recording payment details.",
+        "details": "1. Create PaymentController with index, create, store, edit, update, destroy methods\n2. Implement payment listing view with search and filtering\n3. Create payment form for recording new payments\n4. Add validation for payment data\n5. Implement 'Mark as Paid' workflow for invoices\n6. Create payment method tracking (bank transfer, cash, mobile money, etc.)\n7. Implement payment reference recording\n8. Add payment receipt generation\n9. Create payment history view for customers\n10. Implement partial payment tracking with remaining balance calculation",
+        "testStrategy": "1. Feature tests for payment recording\n2. Test 'Mark as Paid' workflow\n3. Verify invoice status updates after payment\n4. Test partial payment functionality\n5. Verify payment history display\n6. Browser tests for UI components and interactions",
+        "priority": "high",
+        "dependencies": [
+          7
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Customer Portal Dashboard",
+        "description": "Create the customer-facing dashboard with summary tiles showing invoices, domains, and account information.",
+        "details": "1. Create CustomerDashboardController\n2. Implement dashboard view with Bootstrap 5 cards/tiles\n3. Create summary tile for open invoices total\n4. Add summary tile for overdue invoice count\n5. Implement domains expiring in 30/60/90 days tiles\n6. Create recent invoice activity section\n7. Add quick links to domains, invoices, and account information\n8. Implement responsive design for mobile access\n9. Create account status indicator\n10. Add data visualization for invoice history",
+        "testStrategy": "1. Feature tests for dashboard data accuracy\n2. Test responsive design on different screen sizes\n3. Verify correct calculation of summary metrics\n4. Test dashboard with different customer scenarios (new, with invoices, with overdue)\n5. Browser tests for UI components and interactions",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          7
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Customer Domain and Service Viewing Interface",
+        "description": "Develop the customer-facing interface for viewing domains and services with search and sort functionality.",
+        "details": "1. Create CustomerDomainController and CustomerServiceController\n2. Implement domain listing view with search and sort\n3. Create domain detail view showing registrar, dates, pricing, and status\n4. Add visual indicators for domain status and expiry\n5. Implement service listing view\n6. Create service detail view\n7. Add filtering options for domains (active, expired, etc.)\n8. Implement responsive tables for mobile viewing\n9. Add pagination for large domain portfolios\n10. Create domain expiry countdown indicators",
+        "testStrategy": "1. Feature tests for domain and service display\n2. Test search and sort functionality\n3. Verify correct display of domain details\n4. Test responsive design on different screen sizes\n5. Verify filtering options work correctly\n6. Browser tests for UI components and interactions",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          9
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Customer Invoice Viewing and Download",
+        "description": "Build the customer-facing invoice management interface with PDF download and payment instructions.",
+        "details": "1. Create CustomerInvoiceController\n2. Implement invoice listing view with status badges\n3. Create invoice detail view\n4. Add PDF download functionality\n5. Implement payment instructions display\n6. Create invoice status indicators (paid, due, overdue)\n7. Add invoice filtering by status\n8. Implement invoice search functionality\n9. Create invoice history view\n10. Add payment recording interface for customers (if applicable)",
+        "testStrategy": "1. Feature tests for invoice display\n2. Test PDF download functionality\n3. Verify correct display of payment instructions\n4. Test invoice filtering and search\n5. Verify status indicators show correctly\n6. Browser tests for UI components and interactions",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          9
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Settings Management System",
+        "description": "Develop the admin settings interface for managing business information, currency, timezone, and billing instructions.",
+        "details": "1. Create SettingsController\n2. Implement settings form with sections for different setting types\n3. Create business information settings (name, address, contact details)\n4. Add currency settings with formatting options\n5. Implement timezone configuration\n6. Create billing instructions settings for invoices\n7. Add email template settings\n8. Implement invoice numbering configuration\n9. Create system preferences settings\n10. Add settings validation and error handling",
+        "testStrategy": "1. Feature tests for settings update\n2. Test settings validation\n3. Verify settings are correctly applied throughout the application\n4. Test currency formatting with different settings\n5. Verify timezone settings affect date displays\n6. Browser tests for UI components and interactions",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Automated Tasks and Scheduled Jobs",
+        "description": "Implement scheduled tasks for automatic invoice generation, status updates, and renewal reminders.",
+        "details": "1. Create console commands for scheduled tasks\n2. Implement automatic invoice generation for domains expiring in 30 days\n3. Create domain status update job (active → expired → grace → redemption)\n4. Implement overdue invoice calculation based on due dates\n5. Create renewal reminder system\n6. Add task scheduling in Laravel's console kernel\n7. Implement logging for automated tasks\n8. Create admin notification system for important events\n9. Add manual trigger options for automated tasks\n10. Implement error handling and retry logic",
+        "testStrategy": "1. Unit tests for each console command\n2. Test automatic invoice generation with different scenarios\n3. Verify domain status transitions work correctly\n4. Test overdue calculation logic\n5. Verify scheduled tasks run at the correct times\n6. Test error handling and recovery",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          7,
+          8
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Reporting and Analytics System",
+        "description": "Build the reporting system for accounts receivable, expiring domains, and revenue with CSV exports.",
+        "details": "1. Create ReportController\n2. Implement accounts receivable report\n3. Create expiring domains report\n4. Implement revenue report with date filtering\n5. Add CSV export functionality for all reports\n6. Create customer activity report\n7. Implement payment collection report\n8. Add data visualization with charts and graphs\n9. Create domain status distribution report\n10. Implement report scheduling and email delivery",
+        "testStrategy": "1. Feature tests for report generation\n2. Test CSV export functionality\n3. Verify report calculations are accurate\n4. Test date filtering options\n5. Verify data visualization displays correctly\n6. Test report scheduling and delivery",
+        "priority": "low",
+        "dependencies": [
+          3,
+          7,
+          8
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Security, Optimization, and Deployment",
+        "description": "Implement security measures, performance optimizations, and prepare the application for deployment.",
+        "details": "1. Implement proper authorization policies using Laravel's Gate/Policy\n2. Add input validation and sanitization throughout the application\n3. Implement CSRF protection for all forms\n4. Add rate limiting for authentication and API endpoints\n5. Implement database query optimization and indexing\n6. Create caching strategy for frequently accessed data\n7. Optimize assets with Laravel Mix\n8. Implement proper error handling and logging\n9. Create deployment scripts for shared hosting/cPanel\n10. Add security headers and best practices",
+        "testStrategy": "1. Security testing with tools like OWASP ZAP\n2. Performance testing with Laravel Debugbar\n3. Load testing with simulation tools\n4. Test deployment process on staging environment\n5. Verify application works correctly in shared hosting environment\n6. Test error handling and recovery",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "status": "done",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-24T12:52:11.497Z",
+      "updated": "2025-09-24T13:46:21.967Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
