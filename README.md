@@ -1,198 +1,281 @@
-# OneChamber Customer Portal
+# Customer Portal
 
-A secure customer portal for managing domains and services, built with Laravel 11.
+A modern, secure customer portal built with Laravel 11 for managing domains, services, and invoices. Perfect for web hosting companies, domain registrars, and service providers.
 
-## Features
+## 🚀 Features
 
-### Customer Portal
-- **Dashboard**: Overview of domains, invoices, and account status
-- **Domain Management**: View-only access to domain portfolio
-- **Invoice Management**: View and download invoices
-- **Service Management**: View additional services
+### 🔐 Authentication & Security
+- **Role-based access control** (Admin/Customer)
+- **Admin-only customer registration** (no public registration)
+- **Password reset functionality** with email verification
+- **Password reveal icons** on all password fields
+- **Admin-only account deletion** (customers cannot delete accounts)
+- **CSRF protection** and secure password hashing
 
-### Admin Area
-- **Customer Management**: Full CRUD operations for customer accounts
-- **Domain Management**: Add, edit, and track domains
-- **Service Management**: Manage additional services
-- **Invoice System**: Auto-generate invoices and track payments
-- **Reports**: Financial and domain reports
-- **Settings**: Business configuration
+### 👨‍💼 Admin Features
+- **Customer Management**: CRUD operations, CSV import/export, status management
+- **Domain Management**: CRUD operations, CSV import/export, expiry tracking
+- **Service Management**: CRUD operations, billing cycle management
+- **Invoice Management**: Create invoices, PDF generation, payment tracking
+- **Reports**: Accounts receivable, expiring domains, revenue analytics
+- **Settings**: Business configuration, default currency, timezone settings
 
-### Automated Features
-- **Invoice Generation**: Automatic renewal invoices 30 days before expiry
-- **Status Updates**: Automatic domain status management
-- **Overdue Tracking**: Automatic calculation of overdue invoices
+### 👤 Customer Features
+- **Dashboard**: Overview of domains, services, and billing status
+- **Domain View**: List and view domain details with expiry information
+- **Service View**: List and view service details with billing information
+- **Invoice View**: List invoices, view details, download PDFs
+- **Profile Management**: Update personal information and change password
 
-## Requirements
+### 🎨 Modern UI/UX
+- **Clean, minimal design** with Bootstrap 5
+- **Responsive layouts** for mobile and desktop
+- **Sidebar navigation** for both admin and customer interfaces
+- **Consistent design** across all pages
+- **Modern color palette** with proper contrast and accessibility
 
-- PHP 8.1+
-- MySQL 5.7+ or MariaDB
-- Composer
-- Node.js & NPM (for frontend assets)
+## 📋 Requirements
 
-## Installation
+- **PHP 8.1+**
+- **MySQL 5.7+** or **MariaDB**
+- **Composer**
+- **Web server** (Apache/Nginx)
+- **cPanel hosting** (recommended)
 
-1. **Clone or download the project**
+## 🛠️ Installation
+
+### Quick Installation (Recommended)
+
+1. **Download the application**:
    ```bash
-   cd /path/to/your/project
+   git clone https://github.com/davidrukahu/simple-customer-portal.git
+   cd simple-customer-portal
    ```
 
-2. **Install PHP dependencies**
+2. **Upload to cPanel**:
+   - Upload all files to your domain's `public_html` directory
+   - Set proper file permissions (755 for directories, 644 for files)
+
+3. **Create database**:
+   - Go to cPanel → MySQL Databases
+   - Create a new database and user
+   - Add user to database with full privileges
+
+4. **Run installation wizard**:
+   - Visit `https://yourdomain.com/install`
+   - Follow the step-by-step installation process
+   - Configure application settings and database connection
+   - Create your admin account
+
+5. **Access your application**:
+   - Visit your domain
+   - Login with your admin credentials
+   - Start managing customers, domains, and invoices
+
+### Manual Installation (Advanced)
+
+1. **Install dependencies**:
    ```bash
-   composer install
+   composer install --no-dev --optimize-autoloader
    ```
 
-3. **Install frontend dependencies**
-   ```bash
-   npm install
-   ```
-
-4. **Environment setup**
+2. **Configure environment**:
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
 
-5. **Configure your .env file**
+3. **Configure database** in `.env`:
    ```env
-   APP_NAME="OneChamber Customer Portal"
-   APP_URL=http://localhost
-   APP_TIMEZONE="Africa/Nairobi"
-   
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
    DB_PORT=3306
-   DB_DATABASE=onechamber_portal
+   DB_DATABASE=your_database
    DB_USERNAME=your_username
    DB_PASSWORD=your_password
-   
-   # Business Settings
-   BUSINESS_NAME="OneChamber LTD"
-   BUSINESS_ADDRESS="Worldwide Printing Center, 4th Floor, Mushebi Road, Parklands"
-   BUSINESS_CITY="Nairobi"
-   BUSINESS_COUNTRY="Kenya"
-   BUSINESS_EMAIL="info@onechamber.com"
-   
-   # Currency and Localization
-   DEFAULT_CURRENCY=KES
-   CURRENCY_SYMBOL=KSh
-   
-   # Invoice Settings
-   INVOICE_PREFIX=INV
-   INVOICE_START_NUMBER=1
-   DEFAULT_PAYMENT_TERMS=30
-   
-   # Domain Settings
-   DOMAIN_RENEWAL_REMINDER_DAYS=30
-   DOMAIN_EXPIRY_GRACE_DAYS=30
-   DOMAIN_REDEMPTION_DAYS=30
    ```
 
-6. **Run database migrations**
+4. **Run migrations**:
    ```bash
    php artisan migrate
    ```
 
-7. **Create default settings**
-   ```bash
-   php artisan db:seed --class=SettingsSeeder
-   ```
-
-8. **Build frontend assets**
-   ```bash
-   npm run build
-   ```
-
-9. **Create your first admin user**
+5. **Create admin user**:
    ```bash
    php artisan tinker
    ```
    ```php
-   $user = new App\Models\User();
-   $user->name = 'Admin User';
-   $user->email = 'admin@onechamber.com';
-   $user->password = Hash::make('password');
-   $user->role = 'admin';
-   $user->save();
+   App\Models\User::create([
+       'name' => 'Administrator',
+       'email' => 'admin@yourdomain.com',
+       'password' => Hash::make('your_password'),
+       'role' => 'admin',
+       'email_verified_at' => now(),
+   ]);
    ```
 
-## Usage
+## 📁 Project Structure
 
-### Admin Access
-- Login with admin credentials
-- Access admin dashboard at `/admin/dashboard`
-- Manage customers, domains, services, and invoices
+```
+customer-portal/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── Admin/          # Admin controllers
+│   │   ├── Customer/       # Customer controllers
+│   │   ├── Auth/           # Authentication controllers
+│   │   └── InstallController.php
+│   ├── Http/Middleware/    # Custom middleware
+│   └── Models/             # Eloquent models
+├── database/
+│   ├── migrations/         # Database migrations
+│   └── seeders/           # Database seeders
+├── resources/
+│   ├── views/
+│   │   ├── admin/         # Admin views
+│   │   ├── customer/      # Customer views
+│   │   ├── auth/          # Authentication views
+│   │   ├── install/       # Installation wizard
+│   │   └── layouts/       # Layout templates
+│   └── css/               # Stylesheets
+├── routes/
+│   ├── web.php            # Web routes
+│   └── auth.php           # Authentication routes
+└── public/                # Public assets
+```
 
-### Customer Access
-- Admin creates customer accounts
-- Customers login and access their portal at `/customer/dashboard`
-- View-only access to their domains and invoices
+## 🔧 Configuration
 
-## Business Configuration
+### Environment Variables
 
-The system is pre-configured for OneChamber LTD with:
-- **Business Name**: OneChamber LTD
-- **Address**: Worldwide Printing Center, 4th Floor, Mushebi Road, Parklands, Nairobi, Kenya
-- **Currency**: KES (Kenyan Shillings)
-- **Timezone**: Africa/Nairobi (GMT+3)
-- **Invoice Format**: INV-{YYYY}-{sequence} (e.g., INV-2025-0001)
+Key environment variables in `.env`:
 
-## Key Features
+```env
+APP_NAME="Customer Portal"
+APP_ENV=production
+APP_URL=https://yourdomain.com
+APP_TIMEZONE=Africa/Nairobi
 
-### Domain Management
-- Track domain registration and expiry dates
-- Automatic status updates (active → expired → grace → redemption)
-- Renewal reminders and auto-invoicing
-- Registrar information tracking
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 
-### Invoice System
-- Automatic invoice generation 30 days before domain expiry
-- Manual invoice creation
-- PDF invoice generation
-- Payment tracking with simple "Mark as Paid" functionality
-- Multiple payment methods (Wire, M-Pesa, Cash, Cheque, Other)
+MAIL_MAILER=smtp
+MAIL_HOST=your_smtp_host
+MAIL_PORT=587
+MAIL_USERNAME=your_email
+MAIL_PASSWORD=your_password
+MAIL_FROM_ADDRESS="noreply@yourdomain.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
 
-### Customer Portal
-- Professional dashboard with account overview
-- Domain portfolio view with expiry tracking
-- Invoice history with PDF downloads
-- Payment instructions display
+### Business Settings
 
-### Admin Features
-- Comprehensive customer management
-- Bulk operations and CSV import/export
-- Financial reporting and analytics
-- Settings management for business configuration
+Configure your business information through the admin panel:
+- Business name and address
+- Default currency and timezone
+- Invoice numbering scheme
+- Billing instructions
+- Contact information
 
-## Security Features
+## 🎯 Usage
 
-- Role-based access control (Admin vs Customer)
-- CSRF protection on all forms
-- Password hashing and secure authentication
-- Input validation and sanitization
-- Rate limiting on authentication routes
+### Admin Workflow
 
-## Deployment
+1. **Login** to admin panel
+2. **Create customers** through the customer management interface
+3. **Add domains** and services for each customer
+4. **Generate invoices** automatically or manually
+5. **Track payments** and manage billing
+6. **View reports** for business insights
+
+### Customer Workflow
+
+1. **Login** to customer portal
+2. **View dashboard** for overview of services
+3. **Check domains** and expiry dates
+4. **Review invoices** and payment status
+5. **Download PDF invoices** when needed
+6. **Update profile** information
+
+## 🔒 Security Features
+
+- **Role-based access control** with middleware protection
+- **CSRF protection** on all forms
+- **Password hashing** with bcrypt
+- **Input validation** and sanitization
+- **SQL injection protection** with Eloquent ORM
+- **XSS protection** with Blade templating
+- **Secure file uploads** with validation
+
+## 📊 Database Schema
+
+### Core Tables
+- `users` - User accounts (admin/customer)
+- `customers` - Customer information
+- `domains` - Domain registrations
+- `services` - Service subscriptions
+- `invoices` - Invoice records
+- `invoice_items` - Invoice line items
+- `payments` - Payment records
+- `settings` - Application settings
+
+### Key Relationships
+- Customers belong to users
+- Domains belong to customers
+- Services belong to customers
+- Invoices belong to customers
+- Invoice items belong to invoices
+- Payments belong to invoices
+
+## 🚀 Production Deployment
 
 ### cPanel Deployment
-1. Upload files to your cPanel hosting
-2. Create MySQL database and user
-3. Update .env file with production settings
-4. Run migrations: `php artisan migrate`
-5. Set document root to `/public` directory
-6. Configure SSL certificate
 
-### Production Considerations
-- Set `APP_DEBUG=false` in production
-- Use strong database passwords
-- Configure proper mail settings for password resets
-- Set up regular database backups
-- Monitor application logs
+1. **Upload files** to `public_html`
+2. **Set permissions**:
+   - Directories: 755
+   - Files: 644
+   - `storage/` and `bootstrap/cache/`: 755
+3. **Create database** via cPanel
+4. **Run installation wizard** at `/install`
+5. **Configure email** settings for notifications
 
-## Support
+### Performance Optimization
 
-For support and questions, contact OneChamber LTD at info@onechamber.com.
+- **Composer optimization**: `composer install --no-dev --optimize-autoloader`
+- **Laravel optimization**: `php artisan config:cache && php artisan route:cache && php artisan view:cache`
+- **Database indexing** on frequently queried columns
+- **CDN integration** for static assets
 
-## License
+## 🤝 Contributing
 
-This project is proprietary software for OneChamber LTD.
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Commit changes: `git commit -am 'Add feature'`
+4. Push to branch: `git push origin feature-name`
+5. Submit a pull request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+For support and questions:
+- **Email**: admin@onechamber.co.ke
+- **Issues**: [GitHub Issues](https://github.com/davidrukahu/simple-customer-portal/issues)
+- **Documentation**: See `INSTALLATION.md` for detailed setup instructions
+
+## 🎉 Acknowledgments
+
+- Built with [Laravel 11](https://laravel.com/)
+- UI components from [Bootstrap 5](https://getbootstrap.com/)
+- PDF generation with [DomPDF](https://github.com/barryvdh/laravel-dompdf)
+- Icons from [Bootstrap Icons](https://icons.getbootstrap.com/)
+
+---
+
+**Customer Portal** - Modern, secure, and easy to deploy! 🚀
