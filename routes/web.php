@@ -8,6 +8,17 @@ use Illuminate\Support\Facades\Route;
 
 // Installation routes (only available if not installed)
 if (!file_exists(base_path('.installed'))) {
+    // Test route to verify application is working
+    Route::get('/test', function () {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Application is working',
+            'php_version' => PHP_VERSION,
+            'laravel_version' => app()->version(),
+            'installed' => file_exists(base_path('.installed'))
+        ]);
+    });
+    
     Route::get('/install', [InstallController::class, 'index'])->name('install');
     Route::get('/install/requirements', [InstallController::class, 'checkRequirements'])->name('install.requirements');
     Route::post('/install', [InstallController::class, 'install'])->name('install.process');
