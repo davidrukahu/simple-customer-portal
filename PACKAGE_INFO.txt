@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Customer Portal - Clean Production Package
+# OneChamber Portal - Clean Production Package v1.0
 # This package includes only essential files for production deployment
 
-echo "🚀 Customer Portal - Clean Production Package"
-echo "============================================="
+echo "🚀 OneChamber Portal - Clean Production Package v1.0"
+echo "====================================================="
 echo ""
-echo "📦 Package: customer-portal-production.tar.gz"
-echo "📏 Size: $(ls -lh customer-portal-production.tar.gz | awk '{print $5}')"
+echo "📦 Package: onechamber-portal-v1.0.tar.gz"
+echo "📏 Size: $(ls -lh onechamber-portal-v1.0.tar.gz | awk '{print $5}')"
 echo ""
 echo "✅ What's Included:"
 echo "   - All Laravel application files"
@@ -18,7 +18,7 @@ echo "   - No hidden files (.cursor, .git, etc.)"
 echo "   - No development files"
 echo ""
 echo "📋 Deployment Instructions:"
-echo "1. Upload customer-portal-production.tar.gz to cPanel"
+echo "1. Upload onechamber-portal-v1.0.tar.gz to cPanel"
 echo "2. Extract in public_html directory"
 echo "3. Set permissions: 755 for directories, 644 for files"
 echo "4. Test: http://yourdomain.com/test.php"
