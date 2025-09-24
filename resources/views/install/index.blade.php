@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Customer Portal - Installation</title>
     
     <!-- Bootstrap CSS -->
@@ -438,13 +439,18 @@
             
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
+
+            const csrfToken = getCsrfToken();
             
             fetch('/install', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify(data)
             })
             .then(response => response.json())
@@ -468,6 +474,16 @@
                 document.getElementById('error-message').textContent = 'An unexpected error occurred during installation.';
             });
         });
+
+        function getCsrfToken() {
+            const meta = document.querySelector('meta[name="csrf-token"]');
+            if (meta?.content) {
+                return meta.content;
+            }
+
+            const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+            return match ? decodeURIComponent(match[1]) : '';
+        }
     </script>
 </body>
 </html>

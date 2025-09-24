@@ -76,8 +76,30 @@ class InstallController extends Controller
             $envContent = $this->generateEnvFile($request, $appKey);
             File::put(base_path('.env'), $envContent);
 
+            // Refresh runtime configuration to use the new database connection
+            $currentMysqlConfig = config('database.connections.mysql', []);
+            $updatedMysqlConfig = array_merge($currentMysqlConfig, [
+                'driver' => 'mysql',
+                'host' => $request->db_host,
+                'port' => $request->db_port,
+                'database' => $request->db_database,
+                'username' => $request->db_username,
+                'password' => $request->db_password,
+            ]);
+
+            config([
+                'database.connections.mysql' => $updatedMysqlConfig,
+                'database.default' => 'mysql',
+            ]);
+
+            DB::purge('mysql');
+            DB::setDefaultConnection('mysql');
+
             // Run migrations
-            Artisan::call('migrate', ['--force' => true]);
+            Artisan::call('migrate', [
+                '--force' => true,
+                '--database' => 'mysql',
+            ]);
 
             // Create admin user
             $this->createAdminUser($request);
