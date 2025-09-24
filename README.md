@@ -41,7 +41,7 @@ A modern, secure customer portal built with Laravel 11 for managing domains, ser
 - Web server (Apache/Nginx)
 - cPanel hosting (recommended)
 
-## 🛠️ Installation
+## Installation
 
 ### Quick Installation (Recommended)
 
@@ -71,7 +71,7 @@ A modern, secure customer portal built with Laravel 11 for managing domains, ser
    - Login with your admin credentials
    - Start managing customers, domains, and invoices
 
-## 🎯 Usage
+## Usage
 
 ### Admin Workflow
 1. Login to admin panel
@@ -89,7 +89,7 @@ A modern, secure customer portal built with Laravel 11 for managing domains, ser
 5. Download PDF invoices when needed
 6. Update profile information
 
-## 🔒 Security Features
+## Security Features
 
 - Role-based access control with middleware protection
 - CSRF protection on all forms
@@ -99,7 +99,7 @@ A modern, secure customer portal built with Laravel 11 for managing domains, ser
 - XSS protection with Blade templating
 - Secure file uploads with validation
 
-## 🚀 Production Deployment
+## Production Deployment
 
 ### cPanel Deployment
 1. Upload files to `public_html`
@@ -113,10 +113,6 @@ A modern, secure customer portal built with Laravel 11 for managing domains, ser
 - Laravel optimization: `php artisan config:cache && php artisan route:cache && php artisan view:cache`
 - Database indexing on frequently queried columns
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License.
-
----
-
-**Customer Portal** - Modern, secure, and easy to deploy! 🚀
