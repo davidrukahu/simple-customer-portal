@@ -16,6 +16,8 @@ echo "<!DOCTYPE html>
         .btn { display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 10px 5px; }
         .btn:hover { background: #0056b3; }
         .warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; }
     </style>
 </head>
 <body>
@@ -30,38 +32,37 @@ echo "<!DOCTYPE html>
         </div>
         
         <div class='step'>
-            <h3>Step 1: Verify Files</h3>
-            <p>Ensure all Laravel files are uploaded to your public_html directory:</p>
-            <ul>
-                <li>app/ directory</li>
-                <li>bootstrap/ directory</li>
-                <li>config/ directory</li>
-                <li>database/ directory</li>
-                <li>public/ directory</li>
-                <li>resources/ directory</li>
-                <li>routes/ directory</li>
-                <li>storage/ directory</li>
-                <li>vendor/ directory</li>
-                <li>artisan file</li>
-                <li>composer.json file</li>
-                <li>.htaccess file (in root)</li>
-            </ul>
+            <h3>Step 1: Debug Information</h3>
+            <p>First, let's check if everything is working correctly:</p>
+            <a href='../debug.php' class='btn'>🔍 Run Debug Check</a>
         </div>
         
         <div class='step'>
             <h3>Step 2: Test PHP</h3>
-            <p>First, test if PHP is working correctly:</p>
+            <p>Test if PHP is working correctly:</p>
             <a href='../test.php' class='btn'>Test PHP</a>
         </div>
         
         <div class='step'>
-            <h3>Step 3: Run Installation</h3>
-            <p>If PHP test is successful, proceed with the installation:</p>
+            <h3>Step 3: Try Installation</h3>
+            <p>If debug check passes, try the installation:</p>
             <a href='../install' class='btn'>Start Installation</a>
         </div>
         
         <div class='step'>
-            <h3>Step 4: After Installation</h3>
+            <h3>Step 4: Alternative .htaccess</h3>
+            <p>If installation still fails, try the simple .htaccess:</p>
+            <div class='warning'>
+                <strong>Instructions:</strong><br>
+                1. Download <a href='../.htaccess.simple' target='_blank'>.htaccess.simple</a><br>
+                2. Rename your current .htaccess to .htaccess.backup<br>
+                3. Rename .htaccess.simple to .htaccess<br>
+                4. Try installation again
+            </div>
+        </div>
+        
+        <div class='step'>
+            <h3>Step 5: After Installation</h3>
             <p>Once installation is complete, you can delete this install folder for security.</p>
         </div>
         

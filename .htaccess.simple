@@ -1,0 +1,9 @@
+# Ultra-simple .htaccess for shared hosting
+# Use this if the main .htaccess doesn't work
+
+RewriteEngine On
+
+# Basic Laravel routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
