@@ -318,14 +318,14 @@ MAIL_FROM_NAME=\"\${APP_NAME}\"";
         );
         
         CREATE TABLE IF NOT EXISTS cache (
-            key VARCHAR(255) PRIMARY KEY,
+            `key` VARCHAR(255) PRIMARY KEY,
             value MEDIUMTEXT NOT NULL,
             expiration INT NOT NULL,
             INDEX idx_expiration (expiration)
         );
         
         CREATE TABLE IF NOT EXISTS cache_locks (
-            key VARCHAR(255) PRIMARY KEY,
+            `key` VARCHAR(255) PRIMARY KEY,
             owner VARCHAR(255) NOT NULL,
             expiration INT NOT NULL,
             INDEX idx_expiration (expiration)
