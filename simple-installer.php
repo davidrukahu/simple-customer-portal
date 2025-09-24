@@ -180,7 +180,205 @@ MAIL_FROM_NAME=\"\${APP_NAME}\"";
         $pdo = new PDO("mysql:host={$_POST['db_host']};dbname={$_POST['db_name']}", $_POST['db_user'], $_POST['db_pass']);
         echo "<p>✅ Database connection successful</p>";
         
-        // Create admin user (simplified)
+        // Create database tables
+        $sql = "
+        CREATE TABLE IF NOT EXISTS users (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            email_verified_at TIMESTAMP NULL,
+            password VARCHAR(255) NOT NULL,
+            remember_token VARCHAR(100) NULL,
+            created_at TIMESTAMP NULL,
+            updated_at TIMESTAMP NULL
+        );
+        
+        CREATE TABLE IF NOT EXISTS customers (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            company VARCHAR(255) NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            phone VARCHAR(255) NULL,
+            billing_address_json JSON NULL,
+            currency VARCHAR(3) DEFAULT 'KES',
+            notes TEXT NULL,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP NULL,
+            updated_at TIMESTAMP NULL
+        );
+        
+        CREATE TABLE IF NOT EXISTS domains (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            customer_id BIGINT UNSIGNED NOT NULL,
+            fqdn VARCHAR(255) NOT NULL,
+            registrar VARCHAR(255) NULL,
+            registered_at DATE NULL,
+            expires_at DATE NULL,
+            term_years INT DEFAULT 1,
+            price DECIMAL(10,2) NOT NULL,
+            currency VARCHAR(3) DEFAULT 'KES',
+            status ENUM('active', 'expired', 'grace', 'redemption', 'transfer-pending') DEFAULT 'active',
+            auto_renew BOOLEAN DEFAULT TRUE,
+            service_notes TEXT NULL,
+            created_at TIMESTAMP NULL,
+            updated_at TIMESTAMP NULL,
+            INDEX idx_customer_expires (customer_id, expires_at),
+            FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
+        );
+        
+        CREATE TABLE IF NOT EXISTS services (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            customer_id BIGINT UNSIGNED NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            description TEXT NULL,
+            billing_cycle ENUM('one_time', 'monthly', 'yearly') DEFAULT 'yearly',
+            price DECIMAL(10,2) NOT NULL,
+            currency VARCHAR(3) DEFAULT 'KES',
+            next_invoice_on DATE NULL,
+            status ENUM('active', 'paused', 'cancelled') DEFAULT 'active',
+            created_at TIMESTAMP NULL,
+            updated_at TIMESTAMP NULL,
+            FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
+        );
+        
+        CREATE TABLE IF NOT EXISTS invoices (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            customer_id BIGINT UNSIGNED NOT NULL,
+            number VARCHAR(255) UNIQUE NOT NULL,
+            status ENUM('draft', 'sent', 'paid', 'overdue', 'void') DEFAULT 'draft',
+            issue_date DATE NOT NULL,
+            due_date DATE NOT NULL,
+            subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+            tax_total DECIMAL(10,2) NOT NULL DEFAULT 0,
+            total DECIMAL(10,2) NOT NULL DEFAULT 0,
+            currency VARCHAR(3) DEFAULT 'KES',
+            notes TEXT NULL,
+            created_at TIMESTAMP NULL,
+            updated_at TIMESTAMP NULL,
+            FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
+        );
+        
+        CREATE TABLE IF NOT EXISTS invoice_items (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            invoice_id BIGINT UNSIGNED NOT NULL,
+            item_type ENUM('domain', 'service', 'manual') NOT NULL,
+            ref_id BIGINT UNSIGNED NULL,
+            description TEXT NOT NULL,
+            qty DECIMAL(10,2) NOT NULL DEFAULT 1,
+            unit_price DECIMAL(10,2) NOT NULL,
+            line_total DECIMAL(10,2) NOT NULL,
+            created_at TIMESTAMP NULL,
+            updated_at TIMESTAMP NULL,
+            FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
+        );
+        
+        CREATE TABLE IF NOT EXISTS payments (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            invoice_id BIGINT UNSIGNED NOT NULL,
+            amount DECIMAL(10,2) NOT NULL,
+            currency VARCHAR(3) DEFAULT 'KES',
+            method ENUM('wire', 'mpesa', 'cash', 'cheque', 'other') DEFAULT 'wire',
+            paid_on DATE NOT NULL,
+            reference VARCHAR(255) NULL,
+            notes TEXT NULL,
+            created_at TIMESTAMP NULL,
+            updated_at TIMESTAMP NULL,
+            FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
+        );
+        
+        CREATE TABLE IF NOT EXISTS settings (
+            id INT PRIMARY KEY DEFAULT 1,
+            business_name VARCHAR(255) DEFAULT 'OneChamber LTD',
+            email_from VARCHAR(255) DEFAULT 'hello@onechamber.co.ke',
+            support_email VARCHAR(255) DEFAULT 'support@onechamber.co.ke',
+            phone VARCHAR(255) DEFAULT '+254 700 000 000',
+            billing_instructions_md TEXT NULL,
+            address_json JSON NULL,
+            default_currency VARCHAR(3) DEFAULT 'KES',
+            timezone VARCHAR(50) DEFAULT 'Africa/Nairobi',
+            created_at TIMESTAMP NULL,
+            updated_at TIMESTAMP NULL
+        );
+        
+        CREATE TABLE IF NOT EXISTS password_reset_tokens (
+            email VARCHAR(255) PRIMARY KEY,
+            token VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP NULL
+        );
+        
+        CREATE TABLE IF NOT EXISTS sessions (
+            id VARCHAR(255) PRIMARY KEY,
+            user_id BIGINT UNSIGNED NULL,
+            ip_address VARCHAR(45) NULL,
+            user_agent TEXT NULL,
+            payload LONGTEXT NOT NULL,
+            last_activity INT NOT NULL,
+            INDEX idx_user_id (user_id),
+            INDEX idx_last_activity (last_activity)
+        );
+        
+        CREATE TABLE IF NOT EXISTS cache (
+            key VARCHAR(255) PRIMARY KEY,
+            value MEDIUMTEXT NOT NULL,
+            expiration INT NOT NULL,
+            INDEX idx_expiration (expiration)
+        );
+        
+        CREATE TABLE IF NOT EXISTS cache_locks (
+            key VARCHAR(255) PRIMARY KEY,
+            owner VARCHAR(255) NOT NULL,
+            expiration INT NOT NULL,
+            INDEX idx_expiration (expiration)
+        );
+        
+        CREATE TABLE IF NOT EXISTS jobs (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            queue VARCHAR(255) NOT NULL,
+            payload LONGTEXT NOT NULL,
+            attempts TINYINT UNSIGNED NOT NULL,
+            reserved_at INT UNSIGNED NULL,
+            available_at INT UNSIGNED NOT NULL,
+            created_at INT UNSIGNED NOT NULL,
+            INDEX idx_queue_reserved_at (queue, reserved_at)
+        );
+        
+        CREATE TABLE IF NOT EXISTS job_batches (
+            id VARCHAR(255) PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            total_jobs INT NOT NULL,
+            pending_jobs INT NOT NULL,
+            failed_jobs INT NOT NULL,
+            failed_job_ids LONGTEXT NOT NULL,
+            options MEDIUMTEXT NULL,
+            cancelled_at INT NULL,
+            created_at INT NOT NULL,
+            finished_at INT NULL
+        );
+        
+        CREATE TABLE IF NOT EXISTS failed_jobs (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            uuid VARCHAR(255) UNIQUE NOT NULL,
+            connection TEXT NOT NULL,
+            queue TEXT NOT NULL,
+            payload LONGTEXT NOT NULL,
+            exception LONGTEXT NOT NULL,
+            failed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        ";
+        
+        $pdo->exec($sql);
+        echo "<p>✅ Created database tables</p>";
+        
+        // Insert default settings
+        $settings_sql = "INSERT INTO settings (business_name, email_from, support_email, phone, address_json, default_currency, timezone, created_at, updated_at) 
+                        VALUES ('OneChamber LTD', 'hello@onechamber.co.ke', 'support@onechamber.co.ke', '+254 700 000 000', 
+                        '{\"street\":\"Worldwide Printing Center, 4th Floor\",\"city\":\"Mushebi Road, Parklands\",\"country\":\"Nairobi, Kenya\"}', 
+                        'KES', 'Africa/Nairobi', NOW(), NOW()) 
+                        ON DUPLICATE KEY UPDATE updated_at = NOW()";
+        $pdo->exec($settings_sql);
+        echo "<p>✅ Created default settings</p>";
+        
+        // Create admin user
         $admin_password = password_hash($_POST['admin_password'], PASSWORD_DEFAULT);
         $sql = "INSERT INTO users (name, email, password, email_verified_at, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW(), NOW())";
         $stmt = $pdo->prepare($sql);
