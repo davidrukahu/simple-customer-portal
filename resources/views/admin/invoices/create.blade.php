@@ -33,7 +33,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="currency" class="form-label">Currency <span class="text-danger">*</span></label>
                             <select class="form-select @error('currency') is-invalid @enderror" id="currency" name="currency" required>
                                 <option value="KES" {{ old('currency', 'KES') == 'KES' ? 'selected' : '' }}>KES</option>
@@ -41,6 +41,19 @@
                                 <option value="EUR" {{ old('currency') == 'EUR' ? 'selected' : '' }}>EUR</option>
                             </select>
                             @error('currency')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-3">
+                            <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                                <option value="draft" {{ old('status', 'sent') == 'draft' ? 'selected' : '' }}>Draft</option>
+                                <option value="sent" {{ old('status', 'sent') == 'sent' ? 'selected' : '' }}>Sent</option>
+                                <option value="paid" {{ old('status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                                <option value="overdue" {{ old('status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
+                                <option value="void" {{ old('status') == 'void' ? 'selected' : '' }}>Void</option>
+                            </select>
+                            @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -81,7 +94,7 @@
                                     <input type="number" class="form-control unit-price-input" name="items[0][unit_price]" placeholder="Unit Price" step="0.01" min="0" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="number" class="form-control line-total-input" name="items[0][line_total]" placeholder="Total" step="0.01" min="0" readonly>
+                                    <input type="number" class="form-control line-total-input" name="items[0][line_total]" placeholder="Total" step="0.01" min="0" value="{{ old('items.0.line_total', '0.00') }}" readonly>
                                 </div>
                                 <div class="col-md-1">
                                     <button type="button" class="btn btn-outline-danger btn-sm remove-item" style="display: none;">
@@ -100,7 +113,7 @@
                         <div class="col-md-6">
                             <label for="subtotal" class="form-label">Subtotal <span class="text-danger">*</span></label>
                             <input type="number" class="form-control @error('subtotal') is-invalid @enderror" 
-                                   id="subtotal" name="subtotal" step="0.01" min="0" readonly>
+                                   id="subtotal" name="subtotal" step="0.01" min="0" value="{{ old('subtotal', '0.00') }}" readonly>
                             @error('subtotal')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -108,7 +121,7 @@
                         <div class="col-md-6">
                             <label for="tax_total" class="form-label">Tax Total</label>
                             <input type="number" class="form-control @error('tax_total') is-invalid @enderror" 
-                                   id="tax_total" name="tax_total" step="0.01" min="0" value="{{ old('tax_total', 0) }}">
+                                   id="tax_total" name="tax_total" step="0.01" min="0" value="{{ old('tax_total', '0.00') }}">
                             @error('tax_total')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -119,7 +132,7 @@
                         <div class="col-md-6">
                             <label for="total" class="form-label">Total <span class="text-danger">*</span></label>
                             <input type="number" class="form-control @error('total') is-invalid @enderror" 
-                                   id="total" name="total" step="0.01" min="0" readonly>
+                                   id="total" name="total" step="0.01" min="0" value="{{ old('total', '0.00') }}" readonly>
                             @error('total')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

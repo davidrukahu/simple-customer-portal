@@ -48,8 +48,13 @@ class DomainController extends Controller
      */
     public function show(Domain $domain): View
     {
-        // Ensure the domain belongs to the authenticated customer
-        if ($domain->customer_id !== auth()->user()->customer->id) {
+        $customer = auth()->user()->customer;
+
+        if (! $customer) {
+            abort(404, 'Customer profile not found');
+        }
+
+        if ((int) $domain->customer_id !== (int) $customer->id) {
             abort(403, 'Unauthorized access to domain');
         }
 

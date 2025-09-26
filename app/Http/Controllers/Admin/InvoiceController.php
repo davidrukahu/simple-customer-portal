@@ -61,8 +61,9 @@ class InvoiceController extends Controller
     {
         $validated = $request->validate([
             'customer_id' => ['required', 'exists:customers,id'],
+            'status' => ['required', Rule::in(['draft', 'sent', 'paid', 'overdue', 'void'])],
             'issue_date' => ['required', 'date'],
-            'due_date' => ['required', 'date', 'after:issue_date'],
+            'due_date' => ['required', 'date', 'after_or_equal:issue_date'],
             'subtotal' => ['required', 'numeric', 'min:0'],
             'tax_total' => ['nullable', 'numeric', 'min:0'],
             'total' => ['required', 'numeric', 'min:0'],
@@ -75,16 +76,12 @@ class InvoiceController extends Controller
             'items.*.line_total' => ['required', 'numeric', 'min:0'],
         ]);
 
-        // Generate invoice number
-        $year = date('Y');
-        $lastInvoice = Invoice::whereYear('created_at', $year)->orderBy('id', 'desc')->first();
-        $sequence = $lastInvoice ? (intval(substr($lastInvoice->number, -4)) + 1) : 1;
-        $invoiceNumber = 'INV-' . $year . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+        $invoiceNumber = Invoice::generateInvoiceNumber($validated['issue_date']);
 
         $invoice = Invoice::create([
             'customer_id' => $validated['customer_id'],
             'number' => $invoiceNumber,
-            'status' => 'draft',
+            'status' => $validated['status'],
             'issue_date' => $validated['issue_date'],
             'due_date' => $validated['due_date'],
             'subtotal' => $validated['subtotal'],
@@ -105,6 +102,8 @@ class InvoiceController extends Controller
                 'line_total' => $item['line_total'],
             ]);
         }
+
+        $invoice->updateStatus();
 
         return redirect()->route('admin.invoices.index')->with('success', 'Invoice created successfully.');
     }
@@ -137,7 +136,7 @@ class InvoiceController extends Controller
             'customer_id' => ['required', 'exists:customers,id'],
             'status' => ['required', Rule::in(['draft', 'sent', 'paid', 'overdue', 'void'])],
             'issue_date' => ['required', 'date'],
-            'due_date' => ['required', 'date', 'after:issue_date'],
+            'due_date' => ['required', 'date', 'after_or_equal:issue_date'],
             'subtotal' => ['required', 'numeric', 'min:0'],
             'tax_total' => ['nullable', 'numeric', 'min:0'],
             'total' => ['required', 'numeric', 'min:0'],
@@ -162,10 +161,35 @@ class InvoiceController extends Controller
     /**
      * Mark invoice as paid.
      */
-    public function markPaid(Invoice $invoice)
+    public function markPaid(Request $request, Invoice $invoice)
     {
-        $invoice->update(['status' => 'paid']);
+        $validated = $request->validate([
+            'amount' => ['nullable', 'numeric', 'min:0'],
+            'method' => ['nullable', 'string', 'max:50'],
+            'reference' => ['nullable', 'string', 'max:255'],
+            'paid_on' => ['nullable', 'date'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        $invoice->markAsPaid(
+            $validated['amount'] ?? null,
+            $validated['method'] ?? 'manual',
+            $validated['reference'] ?? null,
+            $validated['paid_on'] ?? null,
+            $validated['notes'] ?? null,
+        );
+
         return redirect()->back()->with('success', 'Invoice marked as paid.');
+    }
+
+    /**
+     * Mark invoice as sent.
+     */
+    public function markSent(Invoice $invoice)
+    {
+        $invoice->update(['status' => 'sent']);
+
+        return redirect()->back()->with('success', 'Invoice marked as sent.');
     }
 
     /**

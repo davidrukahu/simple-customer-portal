@@ -113,35 +113,44 @@ class Invoice extends Model
     /**
      * Generate invoice number
      */
-    public static function generateInvoiceNumber(): string
+    public static function generateInvoiceNumber($issueDate = null): string
     {
-        $year = now()->year;
+        $date = $issueDate ? Carbon::parse($issueDate) : now();
+        $year = $date->year;
         $prefix = config('app.invoice_prefix', 'INV');
-        
-        $lastInvoice = static::whereYear('created_at', $year)
-            ->orderBy('id', 'desc')
+        $startSequence = (int) config('app.invoice_start_number', 1);
+
+        $numberPrefix = sprintf('%s-%d-', $prefix, $year);
+
+        $lastInvoice = static::withTrashed()
+            ->where('number', 'like', $numberPrefix . '%')
+            ->orderBy('number', 'desc')
             ->first();
-        
-        $sequence = $lastInvoice ? 
-            (int) substr($lastInvoice->number, -4) + 1 : 
-            config('app.invoice_start_number', 1);
-        
+
+        if ($lastInvoice && preg_match('/(\d{4})$/', $lastInvoice->number, $matches)) {
+            $sequence = (int) $matches[1] + 1;
+        } else {
+            $sequence = $startSequence;
+        }
+
         return sprintf('%s-%d-%04d', $prefix, $year, $sequence);
     }
 
     /**
      * Mark invoice as paid
      */
-    public function markAsPaid($amount = null, $method = 'manual', $reference = null)
+    public function markAsPaid($amount = null, $method = 'manual', $reference = null, $paidOn = null, $notes = null)
     {
         $amount = $amount ?? $this->remaining_balance;
-        
+        $paidOnDate = $paidOn ? Carbon::parse($paidOn) : now();
+
         $this->payments()->create([
             'amount' => $amount,
             'currency' => $this->currency,
             'method' => $method,
-            'paid_on' => now(),
+            'paid_on' => $paidOnDate,
             'reference' => $reference,
+            'notes' => $notes,
         ]);
 
         if ($this->isPaid()) {

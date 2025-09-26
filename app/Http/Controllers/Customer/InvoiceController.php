@@ -49,8 +49,13 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice): View
     {
-        // Ensure the invoice belongs to the authenticated customer
-        if ($invoice->customer_id !== auth()->user()->customer->id) {
+        $customer = auth()->user()->customer;
+
+        if (! $customer) {
+            abort(404, 'Customer profile not found');
+        }
+
+        if ((int) $invoice->customer_id !== (int) $customer->id) {
             abort(403, 'Unauthorized access to invoice');
         }
 
@@ -64,8 +69,13 @@ class InvoiceController extends Controller
      */
     public function download(Invoice $invoice)
     {
-        // Ensure the invoice belongs to the authenticated customer
-        if ($invoice->customer_id !== auth()->user()->customer->id) {
+        $customer = auth()->user()->customer;
+
+        if (! $customer) {
+            abort(404, 'Customer profile not found');
+        }
+
+        if ((int) $invoice->customer_id !== (int) $customer->id) {
             abort(403, 'Unauthorized access to invoice');
         }
 

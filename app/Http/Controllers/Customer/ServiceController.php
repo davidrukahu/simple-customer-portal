@@ -48,8 +48,13 @@ class ServiceController extends Controller
      */
     public function show(Service $service): View
     {
-        // Ensure the service belongs to the authenticated customer
-        if ($service->customer_id !== auth()->user()->customer->id) {
+        $customer = auth()->user()->customer;
+
+        if (! $customer) {
+            abort(404, 'Customer profile not found');
+        }
+
+        if ((int) $service->customer_id !== (int) $customer->id) {
             abort(403, 'Unauthorized access to service');
         }
 

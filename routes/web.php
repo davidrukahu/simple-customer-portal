@@ -59,6 +59,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Invoice management
         Route::resource('invoices', \App\Http\Controllers\Admin\InvoiceController::class);
         Route::patch('/invoices/{invoice}/mark-paid', [\App\Http\Controllers\Admin\InvoiceController::class, 'markPaid'])->name('invoices.mark-paid');
+        Route::patch('/invoices/{invoice}/mark-sent', [\App\Http\Controllers\Admin\InvoiceController::class, 'markSent'])->name('invoices.mark-sent');
         Route::get('/invoices/{invoice}/download', [\App\Http\Controllers\Admin\InvoiceController::class, 'download'])->name('invoices.download');
     
     // Reports

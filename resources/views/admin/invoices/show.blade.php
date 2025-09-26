@@ -12,6 +12,15 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Invoice {{ $invoice->number }}</h5>
                     <div class="d-flex gap-2">
+                        @if($invoice->status === 'draft')
+                            <form method="POST" action="{{ route('admin.invoices.mark-sent', $invoice) }}" class="d-inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-send me-1"></i>Mark as Sent
+                                </button>
+                            </form>
+                        @endif
                         @if($invoice->status !== 'paid')
                             <form method="POST" action="{{ route('admin.invoices.mark-paid', $invoice) }}" class="d-inline">
                                 @csrf
