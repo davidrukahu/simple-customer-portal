@@ -139,11 +139,32 @@
 <body>
     <div class="header">
         <div class="company-info">
-            <h1>OneChamber LTD</h1>
-            <p>Worldwide Printing Center</p>
-            <p>4th Floor, Mushebi Road</p>
-            <p>Parklands, Nairobi, Kenya</p>
-            <p>Email: info@onechamber.co.ke</p>
+            <h1>{{ \App\Models\Settings::get('business_name', 'OneChamber LTD') }}</h1>
+            @php
+                $address = \App\Models\Settings::get('address_json', []);
+                $phone = \App\Models\Settings::get('phone', '');
+                $email = \App\Models\Settings::get('email_from', 'info@onechamber.co.ke');
+            @endphp
+            @if($address && is_array($address))
+                @if(!empty($address['street']))
+                    <p>{{ $address['street'] }}</p>
+                @endif
+                @if(!empty($address['city']) || !empty($address['state']))
+                    <p>
+                        @if(!empty($address['city'])){{ $address['city'] }}@endif
+                        @if(!empty($address['city']) && !empty($address['state'])), @endif
+                        @if(!empty($address['state'])){{ $address['state'] }}@endif
+                        @if(!empty($address['postal_code'])) {{ $address['postal_code'] }}@endif
+                    </p>
+                @endif
+                @if(!empty($address['country']))
+                    <p>{{ $address['country'] }}</p>
+                @endif
+            @endif
+            @if($phone)
+                <p>Phone: {{ $phone }}</p>
+            @endif
+            <p>Email: {{ $email }}</p>
         </div>
         
         <div class="invoice-info">
@@ -231,7 +252,16 @@
     
     <div class="footer">
         <p>Thank you for your business!</p>
-        <p>For any questions regarding this invoice, please contact us at info@onechamber.co.ke</p>
+        <p>For any questions regarding this invoice, please contact us at {{ \App\Models\Settings::get('support_email', 'info@onechamber.co.ke') }}</p>
+        @php
+            $billingInstructions = \App\Models\Settings::get('billing_instructions_md', '');
+        @endphp
+        @if($billingInstructions)
+            <div style="margin-top: 15px; text-align: left; max-width: 80%; margin-left: auto; margin-right: auto;">
+                <h4 style="margin: 10px 0 5px 0; font-size: 11px; font-weight: bold;">Payment Instructions:</h4>
+                <div style="font-size: 10px; line-height: 1.3; white-space: pre-line;">{{ $billingInstructions }}</div>
+            </div>
+        @endif
     </div>
 </body>
 </html>
